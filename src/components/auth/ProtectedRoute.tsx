@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -14,7 +14,11 @@ export default function ProtectedRoute({
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
   }
 
   if (!user) {

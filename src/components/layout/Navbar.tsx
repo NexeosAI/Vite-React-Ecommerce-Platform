@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useCartStore } from '@/store/cartStore';
+import { ShoppingCart, User, LogOut } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import { useCartStore } from '../../store/cartStore';
+import { useAuth } from '../../hooks/useAuth';
+import { supabase } from '../../lib/supabase';
 
 export default function Navbar() {
-  const cartItems = useCartStore((state) => state.items);
+  const cartItems = useCartStore((state: { items: any[] }) => state.items);
+  const { user } = useAuth();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <nav className="border-b">
@@ -23,7 +30,7 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <Link to="/cart" className="p-2 relative">
               <ShoppingCart className="h-6 w-6" />
               {cartItems.length > 0 && (
@@ -32,11 +39,23 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <Link to="/profile">
-              <Button variant="ghost" size="icon">
-                <User className="h-6 w-6" />
-              </Button>
-            </Link>
+            
+            {user ? (
+              <>
+                <Link to="/profile">
+                  <Button variant="ghost" size="icon">
+                    <User className="h-6 w-6" />
+                  </Button>
+                </Link>
+                <Button variant="ghost" size="icon" onClick={handleLogout}>
+                  <LogOut className="h-6 w-6" />
+                </Button>
+              </>
+            ) : (
+              <Link to="/login">
+                <Button>Sign in</Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
